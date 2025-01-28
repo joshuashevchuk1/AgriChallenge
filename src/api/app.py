@@ -1,19 +1,20 @@
 from flask import Flask
-from data.db import db
+import data.db as db
+from models.wx_model import WxModel
 
 class CommonApp:
     def __init__(self, port):
         self.port = port
         self.app = Flask(__name__)
+        self._initialize_database()
 
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
-        self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    def _initialize_database(self):
+        self.db = db.initialize_db()  # Initialize MongoDB connection
+        self.wx_model = WxModel(self.db)  # Pass the database instance to the WxModel
+        print("MongoDB connection initialized and WxModel set up!")
 
-        db.init_app(self.app)
-
-        with self.app.app_context():
-            db.create_all()
-
+    def ingest(self):
+        return
 
     def home(self):
         return "ok", 200
