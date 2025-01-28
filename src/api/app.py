@@ -6,14 +6,11 @@ class CommonApp:
         self.port = port
         self.app = Flask(__name__)
 
-        # Configure the database.py URI (using SQLite as an example)
         self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
         self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-        # Initialize SQLAlchemy with the app
         db.init_app(self.app)
 
-        # Create the database.py tables if they don't exist
         with self.app.app_context():
             db.create_all()
 
