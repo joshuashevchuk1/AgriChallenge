@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .  # Build Flask app from the current directory
+      dockerfile: Dockerfile
+    container_name: flask_app
+    ports:
+      - "9020:9020"  # Map Flask app port 9020 to the host
+    environment:
+      - MONGO_HOST=mongo  # Hostname for MongoDB service
+      - MONGO_PORT=27017
+      - MONGO_DB_NAME=weather_data
+      - MONGO_USER=local
+      - MONGO_PASS=local
+      - APP_PORT=9020
+    depends_on:
+      - mongo  # Ensure MongoDB starts before the Flask app
+
+  mongo:
+    image: mongo:6.0  # Use the official MongoDB image
+    container_name: mongo
+    ports:
+      - "27017:27017"  # Map MongoDB port to the host
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: local
+      MONGO_INITDB_ROOT_PASSWORD: local
+    volumes:
+      - mongo_data:/data/db  # Persist MongoDB data
+
+volumes:
+  mongo_data:
