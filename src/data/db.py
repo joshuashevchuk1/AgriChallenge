@@ -17,10 +17,4 @@ def initialize_db():
     db_name = os.getenv("MONGO_DB_NAME", "weather_data")
     db = client[db_name]
 
-    # Explicitly reference 'wx' collection to ensure it exists
-    collection = db["wx"]
-
-    # Ensure 'timestamp' is a unique field to prevent duplicates
-    collection.create_index("timestamp", unique=True)
-
     return db  # Return the database instance

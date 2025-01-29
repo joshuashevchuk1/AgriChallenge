@@ -1,32 +1,38 @@
+from pymongo import UpdateOne
+
 class WxModel:
     def __init__(self, db):
-        self.collection = db["wx"]
+        self.db = db
+        self.collection = db["weather_data"]
 
-    def add_weather_data(self, timestamp, max_temp, min_temp, precipitation):
-        try:
-            document = {
-                "timestamp": timestamp,
-                "max_temp": max_temp,
-                "min_temp": min_temp,
-                "precipitation": precipitation,
-            }
-            result = self.collection.update_one(
-                {"timestamp": timestamp},  # Query to check if it exists
-                {"$setOnInsert": document},  # Insert only if missing
-                upsert=True  # Ensures insertion but no overwrite
+    def insert_many(self, records):
+        """
+        Performs a bulk upsert of records into the database.
+        :param records: List of records to insert or update
+        :return: The number of records successfully upserted
+        """
+        operations = []
+        for record in records:
+            operations.append(
+                UpdateOne(
+                    {"timestamp": record["timestamp"],
+                     "max_temp": record["max_temp"],
+                     "min_temp": record["min_temp"],
+                     "precipitation": record["precipitation"]},
+                    {
+                        "$set": {
+                            "timestamp": record["timestamp"],
+                            "max_temp": record["max_temp"],
+                            "min_temp": record["min_temp"],
+                            "precipitation": record["precipitation"]
+                        }
+                    },
+                    upsert=True
+                )
             )
-            if result.upserted_id:
-                return f"Data inserted with ID: {result.upserted_id}"
-            return "Duplicate record skipped"
-        except Exception as e:
-            return f"Error: {str(e)}"
 
-    def get_weather_data(self, timestamp):
-        return self.collection.find_one({"timestamp": timestamp})
+        if operations:
+            result = self.collection.bulk_write(operations)
+            return result.upserted_count + result.modified_count  # Return both inserted and modified records count
 
-    def get_existing_timestamps(self):
-        """
-        helper method to get a set of all existing timestamps in the database
-        :return:
-        """
-        return {record["timestamp"] for record in self.collection.find({}, {"timestamp": 1})}
+        return 0  # Return 0 if no operations were performed
