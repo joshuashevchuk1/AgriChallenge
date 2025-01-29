@@ -50,5 +50,18 @@ class WeatherRecordsModel:
 
         return total_upserted
 
-    def get_all_weather_data(self):
-        pass
+    def get_weather_data(self, filter_criteria=None, skip=0, limit=100):
+        """
+        Fetches weather records from the database based on filter criteria and pagination.
+        :param filter_criteria: A dictionary of filter criteria (e.g., station_name, date)
+        :param skip: Number of records to skip (pagination)
+        :param limit: Number of records to return (pagination)
+        :return: List of weather records matching the criteria
+        """
+        filter_criteria = filter_criteria or {}  # Default to empty dict if no filter provided
+
+        # Query the collection based on filter criteria and pagination
+        cursor = self.collection.find(filter_criteria).skip(skip).limit(limit)
+
+        # Return the results as a list of documents
+        return list(cursor)

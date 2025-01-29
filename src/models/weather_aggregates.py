@@ -6,6 +6,25 @@ class WeatherAggregatesModel:
         self.wx_collection = db["wx"]
         self.aggregate_collection = db["weather_aggregates"]
 
+    def get_weather_data(self, filter_criteria=None, skip=0, limit=100):
+        """
+        Retrieves weather aggregate data from the weather_aggregates collection.
+        :param filter_criteria: Optional filter criteria (dict) to query the collection
+        :param skip: Number of records to skip (for pagination)
+        :param limit: Number of records to return (for pagination)
+        :return: A list of weather aggregate data
+        """
+        if filter_criteria is None:
+            filter_criteria = {}
+
+        # Query the aggregate collection with pagination and filtering
+        weather_data = list(
+            self.aggregate_collection.find(filter_criteria)
+            .skip(skip)
+            .limit(limit)
+        )
+        return weather_data
+
     def aggregate_and_insert(self, batch_size=1000):
         """
         Aggregates weather data from the wx collection and inserts the aggregated results into the weather_aggregates collection.

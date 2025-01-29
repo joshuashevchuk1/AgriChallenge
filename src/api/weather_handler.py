@@ -6,7 +6,7 @@ from flask_swagger_ui import get_swaggerui_blueprint
 class WeatherHandler:
     def __init__(self, app):
         self.app = app
-        self.weather_model = WeatherRecordsModel(self.app.db)  # Instance of your weather model
+        self.weather_records_model = WeatherRecordsModel(self.app.db)  # Instance of your weather model
         self.weather_aggregates_model = WeatherAggregatesModel(self.app.db)  # Instance of your weather aggregates model
 
     def get_weather(self):
@@ -25,7 +25,7 @@ class WeatherHandler:
         if station_name:
             filter_criteria["station_name"] = station_name
 
-        weather_data = self.weather_model.get_weather_data(filter_criteria, skip, limit)
+        weather_data = self.weather_records_model.get_weather_data(filter_criteria, skip, limit)
         return jsonify({"weather_data": weather_data}), 200
 
     def get_weather_stats(self):
@@ -54,15 +54,15 @@ class WeatherHandler:
         self.app.add_url_rule('/api/weather', 'get_weather', self.get_weather, methods=["GET"])
         self.app.add_url_rule('/api/weather/stats', 'get_weather_stats', self.get_weather_stats, methods=["GET"])
 
-    def init_swagger(self):
-        """
-        Initialize Swagger UI for API documentation.
-        """
-        swagger_url = '/swagger'
-        api_url = '/static/swagger.json'  # Path to your Swagger JSON
-        swagger_ui_blueprint = get_swaggerui_blueprint(
-            swagger_url,
-            api_url,
-            config={'app_name': "Weather API"}
-        )
-        self.app.register_blueprint(swagger_ui_blueprint, url_prefix=swagger_url)
+    # def init_swagger(self):
+    #     """
+    #     Initialize Swagger UI for API documentation.
+    #     """
+    #     swagger_url = '/swagger'
+    #     api_url = '/static/swagger.json'  # Path to your Swagger JSON
+    #     swagger_ui_blueprint = get_swaggerui_blueprint(
+    #         swagger_url,
+    #         api_url,
+    #         config={'app_name': "Weather API"}
+    #     )
+    #     self.app.register_blueprint(swagger_ui_blueprint, url_prefix=swagger_url)
