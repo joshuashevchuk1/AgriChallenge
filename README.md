@@ -33,8 +33,17 @@ Once the application ingests all data the following data inspection endpoints ar
 
 ### Example usage:
 
+for GET weather
+
 ```commandline
-curl -X GET "http://localhost:5000/api/weather/stats?station_name=Station_A&year=2025&skip=0&limit=10"
+ curl -X GET "http://localhost:9020/api/weather?station_name=USC
+00129557&skip=0&limit=10" 
+```
+
+for GET weather stats
+
+```commandline
+curl -X GET "http://localhost:9020/api/weather/stats?station_name=USC00129557&year=1991&skip=0&limit=10"
 ```
 
 ## Deployement plan for ECS containers

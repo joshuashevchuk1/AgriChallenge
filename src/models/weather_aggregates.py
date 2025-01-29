@@ -23,6 +23,11 @@ class WeatherAggregatesModel:
             .skip(skip)
             .limit(limit)
         )
+
+        # Convert ObjectId to string
+        for record in weather_data:
+            record['_id'] = str(record['_id'])  # Convert _id to string
+
         return weather_data
 
     def aggregate_and_insert(self, batch_size=1000):

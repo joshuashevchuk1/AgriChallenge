@@ -28,10 +28,6 @@ class WeatherHandler:
         return jsonify({"weather_data": weather_data}), 200
 
     def get_weather_stats(self):
-        """
-        Endpoint to get weather aggregate statistics based on filter parameters.
-        Can filter by station_name, year, and apply pagination.
-        """
         filter_criteria = {}
         station_name = request.args.get("station_name")
         year = request.args.get("year")
@@ -41,9 +37,16 @@ class WeatherHandler:
         if station_name:
             filter_criteria["station_name"] = station_name
         if year:
-            filter_criteria["year"] = year
+            filter_criteria["year"] = int(year)  # Ensure year is an integer
+
+        # Log the filter criteria
+        print(f"Filter criteria for weather stats: {filter_criteria}")
 
         weather_aggregates = self.weather_aggregates_model.get_weather_data(filter_criteria, skip, limit)
+
+        if not weather_aggregates:
+            return jsonify({"error": "No data found"}), 404
+
         return jsonify({"weather_aggregates": weather_aggregates}), 200
 
     def add_routes(self):

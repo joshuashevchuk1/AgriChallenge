@@ -63,5 +63,12 @@ class WeatherRecordsModel:
         # Query the collection based on filter criteria and pagination
         cursor = self.collection.find(filter_criteria).skip(skip).limit(limit)
 
-        # Return the results as a list of documents
-        return list(cursor)
+        # Fetch results as a list
+        weather_data = list(cursor)
+
+        # Convert ObjectId to string in all records directly
+        for record in weather_data:
+            record["_id"] = str(record["_id"])
+
+        return weather_data
+
