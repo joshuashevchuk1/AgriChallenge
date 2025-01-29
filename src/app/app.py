@@ -1,6 +1,8 @@
 from flask import Flask
 import data.db as db
 import logging
+
+from api.weather_handler import WeatherHandler
 from data.ingest import WeatherIngestor
 
 
@@ -17,8 +19,9 @@ class CommonApp:
         logging.info("db and wx_model initialized")
 
     def init_app(self):
-        #self.weather_ingestor.ingestAll("./data/wx_data")
+        self.weather_ingestor.ingestAll("./data/wx_data")
         self.weather_ingestor.ingest_aggregates()
+        self.weather_handler = WeatherHandler(self.app)
 
     def home(self):
         return "ok", 200
@@ -35,6 +38,8 @@ class CommonApp:
         self.app.add_url_rule(
             '/healthCheck', 'health_check', self.health_check, methods=["GET"]
         )
+
+        self.weather_handler.add_routes()
 
     def run_server(self):
         self.add_routes()
