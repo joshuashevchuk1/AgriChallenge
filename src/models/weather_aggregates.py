@@ -17,6 +17,14 @@ class WeatherAggregatesModel:
 
         # Aggregation pipeline to compute the required statistics
         pipeline = [
+            # Match stage to filter out null values and -9999 values
+            {
+                "$match": {
+                    "max_temp": {"$ne": None, "$ne": -9999},
+                    "min_temp": {"$ne": None, "$ne": -9999},
+                    "precipitation": {"$ne": None, "$ne": -9999}
+                }
+            },
             {
                 "$project": {
                     "station_name": 1,

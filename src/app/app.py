@@ -17,8 +17,8 @@ class CommonApp:
         logging.info("db and wx_model initialized")
 
     def init_app(self):
-        self.weather_ingestor.ingestAll("./data/wx_data")
-        #self.weather_ingestor.ingest_aggregates()
+        #self.weather_ingestor.ingestAll("./data/wx_data")
+        self.weather_ingestor.ingest_aggregates()
 
     def home(self):
         return "ok", 200
