@@ -1,9 +1,8 @@
 from flask import Flask
 import data.db as db
 import logging
-from src.app.ingest import WeatherIngestor
+from data.ingest import WeatherIngestor
 
-import os
 
 class CommonApp:
     def __init__(self, port):

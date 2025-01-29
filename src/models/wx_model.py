@@ -23,3 +23,10 @@ class WxModel:
 
     def get_weather_data(self, timestamp):
         return self.collection.find_one({"timestamp": timestamp})
+
+    def get_existing_timestamps(self):
+        """
+        helper method to get a set of all existing timestamps in the database
+        :return:
+        """
+        return {record["timestamp"] for record in self.collection.find({}, {"timestamp": 1})}
