@@ -8,7 +8,7 @@ from app.models.weather_aggregates import WeatherAggregatesModel
 from app.models.weather_records import WeatherRecordsModel
 
 
-class WeatherApp:
+class WeatherApi:
     def __init__(self, port):
         self.port = port
         self.app = Flask(__name__)
