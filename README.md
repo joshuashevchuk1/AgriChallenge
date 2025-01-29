@@ -2,7 +2,9 @@
 
 ## Requirements
 
-If doing local development, mongo is required
+- python3.9+
+- mongodb
+- docker
 
 ## Setup
 
