@@ -43,7 +43,7 @@ class CommonApp:
         return records
 
     def ingest(self):
-        self.weather_ingestor
+        self.weather_ingestor.ingest("/data/USC00110072.txt")
 
     def home(self):
         return "ok", 200
