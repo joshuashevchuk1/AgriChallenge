@@ -1,8 +1,8 @@
 from flask import Flask, jsonify
+from flask_restx import Resource, Api
+
 import data.db as db
 import logging
-from flask_swagger_ui import get_swaggerui_blueprint
-from flask_apispec import FlaskApiSpec
 from api.weather_handler import WeatherHandler
 from data.ingest import WeatherIngestor
 
@@ -11,13 +11,13 @@ class CommonApp:
     def __init__(self, port):
         self.port = port
         self.app = Flask(__name__)
+        self.api = Api(
+            self.app,
+            title='Weather api',
+            version='1.0',
+            description='AgriChallenge')
         self.weather_ingestor = None
         self.initialize_database()
-
-        # Initialize Flask-ApiSpec to generate Swagger spec
-        self.app.config['APISPEC_SPEC'] = FlaskApiSpec(self.app)
-        self.app.config['APISPEC_SWAGGER_URL'] = '/swagger.json'
-        self.app.config['APISPEC_SWAGGER_UI_URL'] = '/swagger'  # Swagger UI URL
 
     def initialize_database(self):
         self.db = db.initialize_db()  # Initialize MongoDB connection
@@ -33,16 +33,6 @@ class CommonApp:
         self.weather_handler = WeatherHandler(self.app, self.db)
         self.weather_handler.add_routes()
 
-        # Initialize Swagger UI
-        swagger_url = '/swagger'  # Swagger UI URL
-        api_url = '/swagger.json'  # Path to Swagger spec (JSON)
-        swagger_ui_blueprint = get_swaggerui_blueprint(
-            swagger_url,
-            api_url,
-            config={'app_name': "Weather API"}
-        )
-        self.app.register_blueprint(swagger_ui_blueprint, url_prefix=swagger_url)
-
     def home(self):
         return "ok", 200
 
@@ -51,13 +41,24 @@ class CommonApp:
 
     def add_routes(self):
         logging.info("registering /")
-        self.app.add_url_rule(
-            '/', 'home', self.home, methods=["GET"]
-        )
+
+        @self.api.route('/')
+        class Home(Resource):
+            def get(self):
+                """
+                Home route
+                """
+                return {"message": "ok"}
+
         logging.info("registering /healthcheck")
-        self.app.add_url_rule(
-            '/healthCheck', 'health_check', self.health_check, methods=["GET"]
-        )
+
+        @self.api.route('/healthCheck')
+        class HealthCheck(Resource):
+            def get(self):
+                """
+                Health check route
+                """
+                return {"message": "healthcheck"}
 
     def run_server(self):
         self.add_routes()
