@@ -15,6 +15,16 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose the Flask application port
 EXPOSE 9020
+# Use the official MongoDB image from Docker Hub
+FROM mongo:latest
 
+# Expose the default MongoDB port (27017)
+EXPOSE 27017
+
+# Define a volume to persist data (recommended)
+VOLUME /data/db
+
+# Start the MongoDB server
+CMD ["mongod"]
 # Command to run your Flask api
 CMD ["python", "/agri/src/run.py"]
