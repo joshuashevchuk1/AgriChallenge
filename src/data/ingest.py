@@ -10,12 +10,16 @@ class WeatherIngestor:
     @staticmethod
     def get_records(file_path):
         """
-        Helper method to get records from a wx txt file
-        :param file_path:
-        :return:
+        Helper method to get records from a wx txt file.
+        The station ID is extracted from the file name and added to each record.
+        :param file_path: Path to the weather file
+        :return: List of records with station_name included
         """
         records = []
         try:
+            # Extract the station_name from the file name (assumes file name is station_name.txt)
+            station_name = os.path.basename(file_path).split('.')[0]
+
             with open(file_path, "r") as file:
                 for line in file:
                     parts = line.strip().split("\t")  # Split by tab character
@@ -29,6 +33,7 @@ class WeatherIngestor:
                         "min_temp": float(min_temp),
                         "max_temp": float(max_temp),
                         "precipitation": float(precipitation),
+                        "station_name": station_name,  # Add station_name from file name
                     })
         except Exception as e:
             logging.error(f"Error reading file {file_path}: {e}")
@@ -37,7 +42,7 @@ class WeatherIngestor:
 
     def ingestAll(self, dir):
         """
-        Ingests all valid wx txt files in the given directory into the mongo database
+        Ingests all valid wx txt files in the given directory into the mongo database.
         :param dir: directory containing the .txt files
         :return: total count of inserted records
         """
@@ -73,9 +78,9 @@ class WeatherIngestor:
 
     def ingest(self, file_path):
         """
-        Ingests all records in a wx txt file into mongo
-        :param file_path:
-        :return:
+        Ingests all records in a wx txt file into mongo.
+        :param file_path: Path to the weather file
+        :return: Count of inserted records
         """
 
         logging.info("Starting ingestion process")
@@ -97,9 +102,9 @@ class WeatherIngestor:
 
     def _bulk_insert(self, records):
         """
-        Bulk inserts all records into the mongo database
-        :param records:
-        :return:
+        Bulk inserts all records into the mongo database.
+        :param records: List of records to insert
+        :return: Number of records inserted
         """
         # Insert all records using insert_many in WxModel
         inserted_count = self.wx_model.insert_many(records)

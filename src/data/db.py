@@ -23,7 +23,8 @@ def initialize_db():
         [("timestamp", ASCENDING),
          ("max_temp", ASCENDING),
          ("min_temp", ASCENDING),
-         ("precipitation", ASCENDING)],
+         ("precipitation", ASCENDING),
+         ("station_name",ASCENDING)],
         unique=False  # Ensures that the index is not unique, allowing upserts with same timestamp
     )
 

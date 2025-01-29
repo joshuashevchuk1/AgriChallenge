@@ -22,13 +22,15 @@ class WxModel:
                     {"timestamp": record["timestamp"],
                      "max_temp": record["max_temp"],
                      "min_temp": record["min_temp"],
-                     "precipitation": record["precipitation"]},
+                     "precipitation": record["precipitation"],
+                     "station_name": record["station_name"]},
                     {
                         "$set": {
                             "timestamp": record["timestamp"],
                             "max_temp": record["max_temp"],
                             "min_temp": record["min_temp"],
-                            "precipitation": record["precipitation"]
+                            "precipitation": record["precipitation"],
+                            "station_name": record["station_name"]
                         }
                     },
                     upsert=True
