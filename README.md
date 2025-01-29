@@ -21,7 +21,21 @@ Data is ingested at the application level.
 
 ## Using the api
 
+Once the application ingests all data the following data inspection endpoints are available
 
-## Deployement plan EC2 or ECS containers
+```commandline
+/api/weather
+```
 
-To deploy this 
+```commandline
+/api/weather/stats
+```
+
+## Deployement plan for ECS containers
+
+TODO:
+
+To deploy this to ECS
+
+- Code should be refactored with a yaml based config system
+- Code should have a gitactions
