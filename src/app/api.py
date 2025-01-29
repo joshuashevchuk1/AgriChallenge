@@ -27,7 +27,7 @@ class WeatherApi:
         logging.info("db and wx_model initialized")
 
     def ingest(self):
-        self.weather_ingestor.ingestAll("./app/data/wx_data")
+        self.weather_ingestor.ingest_all("./app/data/wx_data")
         self.weather_ingestor.ingest_aggregates()
 
     @staticmethod

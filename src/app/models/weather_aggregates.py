@@ -32,7 +32,8 @@ class WeatherAggregatesModel:
 
     def aggregate_and_insert(self, batch_size=1000):
         """
-        Aggregates weather data from the wx collection and inserts the aggregated results into the weather_aggregates collection.
+        Aggregates weather data from the wx collection and
+        inserts the aggregated results into the weather_aggregates collection.
         :param batch_size: The batch size for the bulk operation
         :return: The number of records successfully upserted
         """

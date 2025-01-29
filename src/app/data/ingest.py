@@ -43,30 +43,30 @@ class WeatherIngestor:
 
         return records
 
-    def ingestAll(self, dir):
+    def ingest_all(self, dir_path):
         """
         Ingests all valid wx txt files in the given directory into the mongo database.
-        :param dir: directory containing the .txt files
+        :param dir_path: directory containing the .txt files
         :return: total count of inserted records
         """
         total_inserted = 0
-        logging.info(f"Starting ingestion of all files in directory: {dir}")
+        logging.info(f"Starting ingestion of all files in directory: {dir_path}")
         start_time = datetime.now()
 
         # Check if directory exists
-        if not os.path.exists(dir):
-            logging.error(f"Directory {dir} does not exist.")
+        if not os.path.exists(dir_path):
+            logging.error(f"Directory {dir_path} does not exist.")
             return 0
 
         # Get all .txt files in the directory
-        txt_files = [f for f in os.listdir(dir) if f.endswith(".txt")]
+        txt_files = [f for f in os.listdir(dir_path) if f.endswith(".txt")]
 
         if not txt_files:
-            logging.warning(f"No .txt files found in directory {dir}.")
+            logging.warning(f"No .txt files found in directory {dir_path}.")
             return 0
 
         for file_name in txt_files:
-            file_path = os.path.join(dir, file_name)
+            file_path = os.path.join(dir_path, file_name)
             logging.info(f"Processing file: {file_path}")
 
             # Use the existing ingest method for each file
@@ -94,11 +94,13 @@ class WeatherIngestor:
             logging.info("No valid records found. Aborting ingestion.")
             return 0
 
-        # Directly use the insert_many function to bulk insert all records without filtering by timestamp
+        # Directly use the insert_many function to bulk insert all
+        # records without filtering by timestamp
         inserted_count = self._bulk_insert(records)
 
         end_time = datetime.now()
-        logging.info(f"Finished ingestion process: Inserted {inserted_count} new records for {file_path}")
+        logging.info(f"Finished ingestion process: Inserted "
+                     f"{inserted_count} new records for {file_path}")
         logging.info(f"Ingestion duration: {end_time - start_time}")
 
         return inserted_count
