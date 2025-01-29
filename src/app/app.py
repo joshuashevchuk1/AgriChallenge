@@ -11,16 +11,18 @@ class CommonApp:
         self.port = port
         self.app = Flask(__name__)
         self.weather_ingestor = None
-        self._initialize_database()
+        self.initialize_database()
 
-    def _initialize_database(self):
+    def initialize_database(self):
         self.db = db.initialize_db()  # Initialize MongoDB connection
         self.weather_ingestor = WeatherIngestor(self.db)
         logging.info("db and wx_model initialized")
 
-    def init_app(self):
+    def ingest(self):
         self.weather_ingestor.ingestAll("./data/wx_data")
         self.weather_ingestor.ingest_aggregates()
+
+    def init_api(self):
         self.weather_handler = WeatherHandler(self.app)
 
     def home(self):
