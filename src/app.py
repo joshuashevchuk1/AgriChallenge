@@ -8,7 +8,7 @@ from models.weather_aggregates import WeatherAggregatesModel
 from models.weather_records import WeatherRecordsModel
 
 
-class CommonApp:
+class WeatherApp:
     def __init__(self, port):
         self.port = port
         self.app = Flask(__name__)

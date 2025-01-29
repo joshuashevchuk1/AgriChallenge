@@ -1,5 +1,5 @@
 
-import app.app as common_server
+import app as common_server
 import logging
 
 logging.basicConfig(
@@ -8,7 +8,7 @@ logging.basicConfig(
 logging.root.setLevel(logging.INFO)
 
 def run_flask_app():
-     server = common_server.CommonApp("9020")
+     server = common_server.WeatherApp("9020")
      server.initialize_database()
      #server.ingest() # comment this line out if you don't want to re-run the ingestion process
      server.run_server()
