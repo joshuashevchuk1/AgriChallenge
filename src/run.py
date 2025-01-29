@@ -10,7 +10,7 @@ logging.root.setLevel(logging.INFO)
 def run_flask_app():
      server = weather_api.WeatherApi("9020")
      server.initialize_database()
-     server.ingest() # comment this line out if you don't want to re-run the ingestion process
+     #server.ingest() # comment this line out if you don't want to re-run the ingestion process
      server.run_server()
 
 if __name__ == '__main__':

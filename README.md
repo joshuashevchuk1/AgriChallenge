@@ -2,7 +2,9 @@
 
 ## Requirements
 
-If doing local development, mongo is required
+- python3.9+
+- mongodb
+- docker
 
 ## Setup
 
@@ -36,8 +38,7 @@ Once the application ingests all data the following data inspection endpoints ar
 for GET weather
 
 ```commandline
- curl -X GET "http://localhost:9020/api/weather?station_name=USC
-00129557&skip=0&limit=10" 
+ curl -X GET "http://localhost:9020/api/weather?station_name=USC00129557&skip=0&limit=10" 
 ```
 
 for GET weather stats

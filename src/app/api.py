@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_restx import Resource, Api
 
-import app.data.db as db
+from app.data import db
 import logging
 from app.data.ingest import WeatherIngestor
 from app.models.weather_aggregates import WeatherAggregatesModel
@@ -10,6 +10,7 @@ from app.models.weather_records import WeatherRecordsModel
 
 class WeatherApi:
     def __init__(self, port):
+        self.db = None
         self.port = port
         self.app = Flask(__name__)
         self.api = Api(
@@ -26,20 +27,22 @@ class WeatherApi:
         logging.info("db and wx_model initialized")
 
     def ingest(self):
-        self.weather_ingestor.ingestAll("./app/data/wx_data")
+        self.weather_ingestor.ingest_all("./app/data/wx_data")
         self.weather_ingestor.ingest_aggregates()
 
-    def home(self):
+    @staticmethod
+    def home():
         return "ok", 200
 
-    def health_check(self):
+    @staticmethod
+    def health_check():
         return "healthcheck", 200
 
-    def add_routes(self,db):
+    def add_routes(self, param_db):
         logging.info("registering /")
 
-        weather_records_model = WeatherRecordsModel(db)
-        weather_aggregates_model = WeatherAggregatesModel(db)
+        weather_records_model = WeatherRecordsModel(param_db)
+        weather_aggregates_model = WeatherAggregatesModel(param_db)
 
         @self.api.route('/')
         class Home(Resource):
@@ -100,7 +103,8 @@ class WeatherApi:
 
                 print(f"Filter criteria for weather stats: {filter_criteria}")
 
-                weather_aggregates = weather_aggregates_model.get_weather_data(filter_criteria, skip, limit)
+                weather_aggregates = (weather_aggregates_model.
+                                      get_weather_data(filter_criteria, skip, limit))
 
                 if not weather_aggregates:
                     return {"error": "No data found"}, 404

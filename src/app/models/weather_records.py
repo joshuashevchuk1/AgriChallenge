@@ -71,4 +71,3 @@ class WeatherRecordsModel:
             record["_id"] = str(record["_id"])
 
         return weather_data
-
