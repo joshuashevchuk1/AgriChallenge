@@ -1,10 +1,11 @@
-from flask import Flask, jsonify
+from flask import Flask, request
 from flask_restx import Resource, Api
 
 import data.db as db
 import logging
-from api.weather_handler import WeatherHandler
 from data.ingest import WeatherIngestor
+from models.weather_aggregates import WeatherAggregatesModel
+from models.weather_records import WeatherRecordsModel
 
 
 class CommonApp:
@@ -28,18 +29,13 @@ class CommonApp:
         self.weather_ingestor.ingestAll("./data/wx_data")
         self.weather_ingestor.ingest_aggregates()
 
-    def init_api(self):
-        # Initialize the WeatherHandler class
-        self.weather_handler = WeatherHandler(self.app, self.db)
-        self.weather_handler.add_routes()
-
     def home(self):
         return "ok", 200
 
     def health_check(self):
         return "healthcheck", 200
 
-    def add_routes(self):
+    def add_routes(self,db):
         logging.info("registering /")
 
         @self.api.route('/')
@@ -60,6 +56,56 @@ class CommonApp:
                 """
                 return {"message": "healthcheck"}
 
+        @self.api.route('/api/weather')
+        class WeatherResource(Resource):
+            def get(self):
+                """
+                Get weather data based on filter parameters.
+                Can filter by station_name, date, and apply pagination.
+                """
+                filter_criteria = {}
+                date = request.args.get("date")
+                station_name = request.args.get("station_name")
+                skip = int(request.args.get("skip", 0))
+                limit = int(request.args.get("limit", 100))
+
+                if date:
+                    filter_criteria["date"] = date
+                if station_name:
+                    filter_criteria["station_name"] = station_name
+
+                weather_records_model = WeatherRecordsModel(db)
+                weather_data = weather_records_model.get_weather_data(filter_criteria, skip, limit)
+                return {"weather_data": weather_data}, 200
+
+        @self.api.route('/api/weather/stats')
+        class WeatherStatsResource(Resource):
+            def get(self):
+                """
+                Get weather aggregate statistics based on filter parameters.
+                Can filter by station_name, year, and apply pagination.
+                """
+                filter_criteria = {}
+                station_name = request.args.get("station_name")
+                year = request.args.get("year")
+                skip = int(request.args.get("skip", 0))
+                limit = int(request.args.get("limit", 100))
+
+                if station_name:
+                    filter_criteria["station_name"] = station_name
+                if year:
+                    filter_criteria["year"] = int(year)  # Ensure year is an integer
+
+                print(f"Filter criteria for weather stats: {filter_criteria}")
+
+                weather_aggregates_model = WeatherAggregatesModel(db)
+                weather_aggregates = weather_aggregates_model.get_weather_data(filter_criteria, skip, limit)
+
+                if not weather_aggregates:
+                    return {"error": "No data found"}, 404
+
+                return {"weather_aggregates": weather_aggregates}, 200
+
     def run_server(self):
-        self.add_routes()
+        self.add_routes(self.db)
         self.app.run("0.0.0.0", self.port, debug=False)

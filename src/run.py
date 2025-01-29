@@ -11,7 +11,6 @@ def run_flask_app():
      server = common_server.CommonApp("9020")
      server.initialize_database()
      #server.ingest() # comment this line out if you don't want to re-run the ingestion process
-     server.init_api()
      server.run_server()
 
 if __name__ == '__main__':
