@@ -1,6 +1,6 @@
 class WxModel:
     def __init__(self, db):
-        self.collection = db.wx  # The `wx` collection in the database
+        self.collection = db["wx"]
 
     def add_weather_data(self, timestamp, max_temp, min_temp, precipitation):
         try:

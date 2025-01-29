@@ -9,6 +9,7 @@ logging.root.setLevel(logging.INFO)
 
 def run_flask_app():
      server = common_server.CommonApp("9020")
+     server.init_app()
      server.run_server()
 
 if __name__ == '__main__':

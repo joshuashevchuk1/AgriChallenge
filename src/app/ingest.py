@@ -56,7 +56,7 @@ class WeatherIngestor:
             return 0
 
         inserted_count = 0
-        self.insert(records)
+        self._insert(records)
 
         end_time = datetime.now()
         logging.info(f"Finished ingestion process: Inserted {inserted_count} new records.")
