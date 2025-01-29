@@ -2,8 +2,8 @@ import logging
 import os
 from datetime import datetime
 
-from models.weather_aggregates import WeatherAggregatesModel
-from models.weather_records import WeatherRecordsModel
+from app.models.weather_aggregates import WeatherAggregatesModel
+from app.models.weather_records import WeatherRecordsModel
 
 class WeatherIngestor:
     def __init__(self, db):

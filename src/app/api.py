@@ -1,11 +1,11 @@
 from flask import Flask, request
 from flask_restx import Resource, Api
 
-import data.db as db
+import app.data.db as db
 import logging
-from data.ingest import WeatherIngestor
-from models.weather_aggregates import WeatherAggregatesModel
-from models.weather_records import WeatherRecordsModel
+from app.data.ingest import WeatherIngestor
+from app.models.weather_aggregates import WeatherAggregatesModel
+from app.models.weather_records import WeatherRecordsModel
 
 
 class WeatherApp:
@@ -37,6 +37,9 @@ class WeatherApp:
 
     def add_routes(self,db):
         logging.info("registering /")
+
+        weather_records_model = WeatherRecordsModel(db)
+        weather_aggregates_model = WeatherAggregatesModel(db)
 
         @self.api.route('/')
         class Home(Resource):
@@ -74,7 +77,6 @@ class WeatherApp:
                 if station_name:
                     filter_criteria["station_name"] = station_name
 
-                weather_records_model = WeatherRecordsModel(db)
                 weather_data = weather_records_model.get_weather_data(filter_criteria, skip, limit)
                 return {"weather_data": weather_data}, 200
 
@@ -98,7 +100,6 @@ class WeatherApp:
 
                 print(f"Filter criteria for weather stats: {filter_criteria}")
 
-                weather_aggregates_model = WeatherAggregatesModel(db)
                 weather_aggregates = weather_aggregates_model.get_weather_data(filter_criteria, skip, limit)
 
                 if not weather_aggregates:
