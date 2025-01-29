@@ -1,5 +1,5 @@
 
-import api.app as common_server
+import app.app as common_server
 import logging
 
 logging.basicConfig(
