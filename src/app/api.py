@@ -10,6 +10,7 @@ from app.models.weather_records import WeatherRecordsModel
 
 class WeatherApi:
     def __init__(self, port):
+        self.db = None
         self.port = port
         self.app = Flask(__name__)
         self.api = Api(
@@ -29,17 +30,19 @@ class WeatherApi:
         self.weather_ingestor.ingestAll("./app/data/wx_data")
         self.weather_ingestor.ingest_aggregates()
 
-    def home(self):
+    @staticmethod
+    def home():
         return "ok", 200
 
-    def health_check(self):
+    @staticmethod
+    def health_check():
         return "healthcheck", 200
 
-    def add_routes(self,db):
+    def add_routes(self, param_db):
         logging.info("registering /")
 
-        weather_records_model = WeatherRecordsModel(db)
-        weather_aggregates_model = WeatherAggregatesModel(db)
+        weather_records_model = WeatherRecordsModel(param_db)
+        weather_aggregates_model = WeatherAggregatesModel(param_db)
 
         @self.api.route('/')
         class Home(Resource):
