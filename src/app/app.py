@@ -18,7 +18,7 @@ class CommonApp:
 
     def init_app(self):
         self.weather_ingestor.ingestAll("./data/wx_data")
-        self.weather_ingestor.ingest_aggregates()
+        #self.weather_ingestor.ingest_aggregates()
 
     def home(self):
         return "ok", 200

@@ -20,7 +20,19 @@ class WeatherAggregatesModel:
             {
                 "$project": {
                     "station_name": 1,
-                    "year": {"$year": {"$toDate": {"$multiply": ["$timestamp", 1000]}}},  # Convert timestamp to year
+                    "year": {
+                        "$year": {
+                            "$toDate": {
+                                "$concat": [
+                                    {"$substr": [{"$toString": "$timestamp"}, 0, 4]},  # Year (first 4 digits)
+                                    "-",
+                                    {"$substr": [{"$toString": "$timestamp"}, 4, 2]},  # Month (next 2 digits)
+                                    "-",
+                                    {"$substr": [{"$toString": "$timestamp"}, 6, 2]}  # Day (last 2 digits)
+                                ]
+                            }
+                        }
+                    },
                     "max_temp": 1,
                     "min_temp": 1,
                     "precipitation": 1,
