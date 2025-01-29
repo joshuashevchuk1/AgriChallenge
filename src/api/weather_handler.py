@@ -1,5 +1,4 @@
 from flask import request, jsonify
-from flasgger import Swagger, swag_from
 from src.models.weather_records import WeatherRecordsModel
 from src.models.weather_aggregates import WeatherAggregatesModel
 
@@ -8,7 +7,6 @@ class WeatherHandler:
         self.app = app
         self.weather_records_model = WeatherRecordsModel(db)
         self.weather_aggregates_model = WeatherAggregatesModel(db)
-        Swagger(app)  # Initialize Flasgger for auto-generation of Swagger documentation
 
     def get_weather(self):
         """
