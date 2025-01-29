@@ -1,4 +1,5 @@
 import logging
+import os
 from datetime import datetime
 from models.wx_model import WxModel
 import concurrent.futures
@@ -67,6 +68,42 @@ class WeatherIngestor:
             precipitation=record["precipitation"],
         )
         return result
+
+    def ingestAll(self, dir):
+        """
+        ingests all valid wx txt files in the given directory into the mongo database
+        :param dir: directory containing the .txt files
+        :return: total count of inserted records
+        """
+        total_inserted = 0
+        logging.info(f"Starting ingestion of all files in directory: {dir}")
+        start_time = datetime.now()
+
+        # Check if directory exists
+        if not os.path.exists(dir):
+            logging.error(f"Directory {dir} does not exist.")
+            return 0
+
+        # Get all .txt files in the directory
+        txt_files = [f for f in os.listdir(dir) if f.endswith(".txt")]
+
+        if not txt_files:
+            logging.warning(f"No .txt files found in directory {dir}.")
+            return 0
+
+        for file_name in txt_files:
+            file_path = os.path.join(dir, file_name)
+            logging.info(f"Processing file: {file_path}")
+
+            # Use the existing ingest method for each file
+            inserted_count = self.ingest(file_path)
+            total_inserted += inserted_count
+
+        end_time = datetime.now()
+        logging.info(f"Finished ingestion of all files. Total records inserted: {total_inserted}")
+        logging.info(f"Ingestion duration: {end_time - start_time}")
+
+        return total_inserted
 
     def ingest(self, file_path):
         """
