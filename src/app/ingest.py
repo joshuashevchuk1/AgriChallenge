@@ -7,7 +7,7 @@ class WeatherIngestor:
         self.wx_model = WxModel(db)
 
     @staticmethod
-    def _read_file(file_path):
+    def read_file(file_path):
         records = []
         try:
             with open(file_path, "r") as file:
@@ -50,13 +50,13 @@ class WeatherIngestor:
         logging.info("Starting ingestion process")
         start_time = datetime.now()
 
-        records = self._read_file(file_path)
+        records = self.read_file(file_path)
         if not records:
             logging.info("No valid records found. Aborting ingestion.")
             return 0
 
         inserted_count = 0
-        self._insert(records)
+        self.insert(records)
 
         end_time = datetime.now()
         logging.info(f"Finished ingestion process: Inserted {inserted_count} new records.")
