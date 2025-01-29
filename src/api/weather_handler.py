@@ -1,12 +1,14 @@
 from flask import request, jsonify
-from src.models.weather_records import WeatherRecordsModel # Assuming you have a weather data model
-from src.models.weather_aggregates import WeatherAggregatesModel  # Assuming you have the weather aggregates model
+from flasgger import Swagger, swag_from
+from src.models.weather_records import WeatherRecordsModel
+from src.models.weather_aggregates import WeatherAggregatesModel
 
 class WeatherHandler:
     def __init__(self, app, db):
         self.app = app
-        self.weather_records_model = WeatherRecordsModel(db)  # Instance of your weather model
-        self.weather_aggregates_model = WeatherAggregatesModel(db)  # Instance of your weather aggregates model
+        self.weather_records_model = WeatherRecordsModel(db)
+        self.weather_aggregates_model = WeatherAggregatesModel(db)
+        Swagger(app)  # Initialize Flasgger for auto-generation of Swagger documentation
 
     def get_weather(self):
         """
@@ -28,6 +30,10 @@ class WeatherHandler:
         return jsonify({"weather_data": weather_data}), 200
 
     def get_weather_stats(self):
+        """
+        Endpoint to get weather aggregate statistics based on filter parameters.
+        Can filter by station_name, year, and apply pagination.
+        """
         filter_criteria = {}
         station_name = request.args.get("station_name")
         year = request.args.get("year")
@@ -56,15 +62,3 @@ class WeatherHandler:
         self.app.add_url_rule('/api/weather', 'get_weather', self.get_weather, methods=["GET"])
         self.app.add_url_rule('/api/weather/stats', 'get_weather_stats', self.get_weather_stats, methods=["GET"])
 
-    # def init_swagger(self):
-    #     """
-    #     Initialize Swagger UI for API documentation.
-    #     """
-    #     swagger_url = '/swagger'
-    #     api_url = '/static/swagger.json'  # Path to your Swagger JSON
-    #     swagger_ui_blueprint = get_swaggerui_blueprint(
-    #         swagger_url,
-    #         api_url,
-    #         config={'app_name': "Weather API"}
-    #     )
-    #     self.app.register_blueprint(swagger_ui_blueprint, url_prefix=swagger_url)

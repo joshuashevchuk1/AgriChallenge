@@ -1,7 +1,8 @@
-from flask import Flask
+from flask import Flask, jsonify
 import data.db as db
 import logging
-
+from flask_swagger_ui import get_swaggerui_blueprint
+from flask_apispec import FlaskApiSpec
 from api.weather_handler import WeatherHandler
 from data.ingest import WeatherIngestor
 
@@ -13,6 +14,11 @@ class CommonApp:
         self.weather_ingestor = None
         self.initialize_database()
 
+        # Initialize Flask-ApiSpec to generate Swagger spec
+        self.app.config['APISPEC_SPEC'] = FlaskApiSpec(self.app)
+        self.app.config['APISPEC_SWAGGER_URL'] = '/swagger.json'
+        self.app.config['APISPEC_SWAGGER_UI_URL'] = '/swagger'  # Swagger UI URL
+
     def initialize_database(self):
         self.db = db.initialize_db()  # Initialize MongoDB connection
         self.weather_ingestor = WeatherIngestor(self.db)
@@ -23,7 +29,19 @@ class CommonApp:
         self.weather_ingestor.ingest_aggregates()
 
     def init_api(self):
-        self.weather_handler = WeatherHandler(self.app,self.db)
+        # Initialize the WeatherHandler class
+        self.weather_handler = WeatherHandler(self.app, self.db)
+        self.weather_handler.add_routes()
+
+        # Initialize Swagger UI
+        swagger_url = '/swagger'  # Swagger UI URL
+        api_url = '/swagger.json'  # Path to Swagger spec (JSON)
+        swagger_ui_blueprint = get_swaggerui_blueprint(
+            swagger_url,
+            api_url,
+            config={'app_name': "Weather API"}
+        )
+        self.app.register_blueprint(swagger_ui_blueprint, url_prefix=swagger_url)
 
     def home(self):
         return "ok", 200
@@ -40,8 +58,6 @@ class CommonApp:
         self.app.add_url_rule(
             '/healthCheck', 'health_check', self.health_check, methods=["GET"]
         )
-
-        self.weather_handler.add_routes()
 
     def run_server(self):
         self.add_routes()
