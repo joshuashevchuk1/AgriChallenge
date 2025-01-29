@@ -1,11 +1,14 @@
 import logging
 import os
 from datetime import datetime
-from models.wx_model import WxModel
+
+from models.weather_aggregates import WeatherAggregatesModel
+from models.weather_records import WeatherRecordsModel
 
 class WeatherIngestor:
     def __init__(self, db):
-        self.wx_model = WxModel(db)
+        self.wx_model = WeatherRecordsModel(db)
+        self.weather_aggregates = WeatherAggregatesModel(db)
 
     @staticmethod
     def get_records(file_path):
@@ -110,3 +113,14 @@ class WeatherIngestor:
         inserted_count = self.wx_model.insert_many(records)
 
         return inserted_count
+
+    def ingest_aggregates(self, batch_size=1000):
+        """
+        Ingests aggregated weather data into the weather_aggregates collection by
+        calling the aggregate_and_insert method from WeatherAggregatesModel.
+        :param batch_size: The batch size for the bulk operation
+        :return: The number of records successfully upserted
+        """
+        total_upserted = self.weather_aggregates.aggregate_and_insert(batch_size)
+        print(f"Total records upserted: {total_upserted}")
+        return total_upserted

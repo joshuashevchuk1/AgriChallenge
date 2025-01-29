@@ -1,6 +1,6 @@
 from pymongo import UpdateOne
 
-class WxModel:
+class WeatherRecordsModel:
     def __init__(self, db):
         self.db = db
         self.collection = db["wx"]
