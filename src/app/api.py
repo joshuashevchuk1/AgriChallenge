@@ -1,7 +1,7 @@
 from flask import Flask, request
 from flask_restx import Resource, Api
 
-import app.data.db as db
+from app.data import db
 import logging
 from app.data.ingest import WeatherIngestor
 from app.models.weather_aggregates import WeatherAggregatesModel
@@ -103,7 +103,8 @@ class WeatherApi:
 
                 print(f"Filter criteria for weather stats: {filter_criteria}")
 
-                weather_aggregates = weather_aggregates_model.get_weather_data(filter_criteria, skip, limit)
+                weather_aggregates = (weather_aggregates_model.
+                                      get_weather_data(filter_criteria, skip, limit))
 
                 if not weather_aggregates:
                     return {"error": "No data found"}, 404

@@ -1,7 +1,0 @@
-[MASTER]
-# Ignore specific directories
-ignore=tests,migrations
-
-[MESSAGES CONTROL]
-# Disable specific Pylint warnings/errors
-disable=C0114,C0115,C0116
