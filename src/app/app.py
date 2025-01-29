@@ -23,7 +23,7 @@ class CommonApp:
         self.weather_ingestor.ingest_aggregates()
 
     def init_api(self):
-        self.weather_handler = WeatherHandler(self.app)
+        self.weather_handler = WeatherHandler(self.app,self.db)
 
     def home(self):
         return "ok", 200

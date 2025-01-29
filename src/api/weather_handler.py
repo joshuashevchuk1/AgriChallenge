@@ -1,13 +1,12 @@
 from flask import request, jsonify
 from src.models.weather_records import WeatherRecordsModel # Assuming you have a weather data model
 from src.models.weather_aggregates import WeatherAggregatesModel  # Assuming you have the weather aggregates model
-from flask_swagger_ui import get_swaggerui_blueprint
 
 class WeatherHandler:
-    def __init__(self, app):
+    def __init__(self, app, db):
         self.app = app
-        self.weather_records_model = WeatherRecordsModel(self.app.db)  # Instance of your weather model
-        self.weather_aggregates_model = WeatherAggregatesModel(self.app.db)  # Instance of your weather aggregates model
+        self.weather_records_model = WeatherRecordsModel(db)  # Instance of your weather model
+        self.weather_aggregates_model = WeatherAggregatesModel(db)  # Instance of your weather aggregates model
 
     def get_weather(self):
         """
