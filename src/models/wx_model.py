@@ -3,16 +3,20 @@ from pymongo import UpdateOne
 class WxModel:
     def __init__(self, db):
         self.db = db
-        self.collection = db["weather_data"]
+        self.collection = db["wx"]
 
-    def insert_many(self, records):
+    def insert_many(self, records, batch_size=1000):
         """
-        Performs a bulk upsert of records into the database.
+        Performs a bulk upsert of records into the database in batches.
         :param records: List of records to insert or update
+        :param batch_size: The batch size for the bulk operation
         :return: The number of records successfully upserted
         """
         operations = []
-        for record in records:
+        total_upserted = 0
+
+        # Iterate over records in batches
+        for i, record in enumerate(records):
             operations.append(
                 UpdateOne(
                     {"timestamp": record["timestamp"],
@@ -31,8 +35,18 @@ class WxModel:
                 )
             )
 
+            # If batch size is reached, execute the bulk_write operation
+            if len(operations) >= batch_size:
+                result = self.collection.bulk_write(operations)
+                total_upserted += result.upserted_count + result.modified_count
+                operations.clear()  # Clear operations for the next batch
+
+        # If there are any remaining operations after the loop, execute them
         if operations:
             result = self.collection.bulk_write(operations)
-            return result.upserted_count + result.modified_count  # Return both inserted and modified records count
+            total_upserted += result.upserted_count + result.modified_count
 
-        return 0  # Return 0 if no operations were performed
+        return total_upserted
+
+    def get_all_weather_data(self):
+        pass
