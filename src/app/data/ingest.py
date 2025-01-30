@@ -1,7 +1,7 @@
 import logging
 import os
-from datetime import datetime
 
+from datetime import datetime
 from app.models.weather_aggregates import WeatherAggregatesModel
 from app.models.weather_records import WeatherRecordsModel
 
