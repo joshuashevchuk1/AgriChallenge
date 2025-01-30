@@ -51,6 +51,13 @@ class WeatherRecordsModel:
         return total_upserted
 
     def get_weather_data(self, filter_criteria=None, skip=0, limit=100):
+        """
+        uses mongo db to get weather data dn converts it to string for json response
+        :param filter_criteria:
+        :param skip:
+        :param limit:
+        :return:
+        """
 
         filter_criteria = filter_criteria or {}  # Default to empty dict if no filter provided
 

@@ -1,5 +1,4 @@
 from pymongo import MongoClient, ASCENDING
-import os
 
 from app import config
 

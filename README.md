@@ -2,9 +2,11 @@
 
 ## Requirements
 
-- python3.9+
-- mongodb
-- docker
+Before you begin make sure the following is installed
+
+- python3.9+ https://www.python.org/downloads/
+- mongodb https://www.mongodb.com/docs/manual/installation/
+- docker https://www.docker.com/get-started/
 
 ## Development
 
@@ -23,6 +25,18 @@ docker pull mongo
 ```commandline
 docker run -d -p 27017:27017 --name agri-mongo
 ```
+To check mongodb you can either use the connection string for compass as 
+https://www.mongodb.com/products/tools/compass
+
+```commandline
+mongodb://<user>:<pass>@localhost:27017/weather_data?authSource=admin
+```
+
+or connect to the shell via monosh
+
+```commandline
+mongosh "mongodb://<user>:<pass>@localhost:27017/weather_data?authSource=admin"
+```
 
 Make sure where you run the application the application and the wx data is defined
 
@@ -40,7 +54,7 @@ docker-compose up --build
 docker-compose down
 ```
 
-This build a build the flask application and mongodb into a docker compose suite called
+This buils the flask application and mongodb into a docker compose suite called
 
 ```commandline
 agrichallenge
