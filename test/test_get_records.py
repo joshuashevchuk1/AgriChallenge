@@ -33,4 +33,3 @@ class TestGetRecords(unittest.TestCase):
         records = util.get_records("./empty.txt.py")
         self.assertEqual(records, [])
 
-
