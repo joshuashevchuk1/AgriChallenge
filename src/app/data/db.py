@@ -1,6 +1,8 @@
 from pymongo import MongoClient, ASCENDING
 import os
 
+from app import config
+
 
 def initialize_db():
     """
@@ -8,10 +10,10 @@ def initialize_db():
     Ensures that the 'wx' collection exists and has a compound index on the specified fields.
     """
     client = MongoClient(
-        host=os.getenv("MONGO_HOST", "localhost"),
-        port=int(os.getenv("MONGO_PORT", 27017)),
-        username=os.getenv("MONGO_USER", None),
-        password=os.getenv("MONGO_PASS", None),
+        host=config.MONGO_HOST,
+        port=int(config.MONGO_PORT),
+        username=config.MONGO_USER,
+        password=config.MONGO_PASS,
     )
 
     db_name = os.getenv("MONGO_DB_NAME", "weather_data")
