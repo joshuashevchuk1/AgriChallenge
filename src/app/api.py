@@ -115,5 +115,4 @@ class WeatherApi:
 
     def run_server(self):
         self.add_routes(self.db)
-        # running on local host
         self.app.run(config.HOST, self.port, debug=False)
