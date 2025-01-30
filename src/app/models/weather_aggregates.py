@@ -32,7 +32,7 @@ class WeatherAggregatesModel:
         operations = []
         total_updated = 0
 
-        # Aggregate yearly stats for each station
+        # mongodb query for aggregate yearly stats for each station
         pipeline = [
             # remove values of -9999 in the aggregates
             {"$match": {"max_temp": {"$ne": -9999}, "min_temp": {"$ne": -9999}, "precipitation": {"$ne": -9999}}},
