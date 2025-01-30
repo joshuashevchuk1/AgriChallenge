@@ -24,6 +24,7 @@ docker pull mongo
 docker run -d -p 27017:27017 --name agri-mongo
 ```
 To check mongodb you can either use the connection string for compass as 
+https://www.mongodb.com/products/tools/compass
 
 ```commandline
 mongodb://<user>:<pass>@localhost:27017/weather_data?authSource=admin
