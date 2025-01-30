@@ -2,6 +2,8 @@
 
 ## Requirements
 
+Before you begin make sure the following is installed
+
 - python3.9+ https://www.python.org/downloads/
 - mongodb https://www.mongodb.com/docs/manual/installation/
 - docker https://www.docker.com/get-started/
