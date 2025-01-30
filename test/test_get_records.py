@@ -32,4 +32,3 @@ class TestGetRecords(unittest.TestCase):
     def test_it_should_return_empty_list_for_empty_file(self):
         records = util.get_records("./empty.txt.py")
         self.assertEqual(records, [])
-
