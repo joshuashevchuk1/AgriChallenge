@@ -74,6 +74,12 @@ for GET weather stats
 curl -X GET "http://localhost:9020/api/weather/stats?station_name=USC00129557&year=1991&skip=0&limit=10"
 ```
 
+Swagger documentation can be found at 
+
+```commandline
+http://localhost:9020/
+```
+
 ## Deployement plan for ECS containers
 
 TODO:
