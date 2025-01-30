@@ -16,7 +16,7 @@ def initialize_db():
         password=config.MONGO_PASS,
     )
 
-    db_name = os.getenv("MONGO_DB_NAME", "weather_data")
+    db_name = config.MONGO_DB_NAME
     db = client[db_name]
     collection = db["wx"]
 

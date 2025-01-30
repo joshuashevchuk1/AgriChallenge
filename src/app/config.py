@@ -39,3 +39,8 @@ if os.environ.get('MONGO_PASS') is not None:
     MONGO_PASS = os.environ['MONGO_PASS']
 else:
     MONGO_PASS = None
+
+if os.environ.get('MONGO_DB_NAME') is not None:
+    MONGO_DB_NAME = os.environ.get('MONGO_DB_NAME')
+else:
+    MONGO_DB_NAME = "weather_data"
