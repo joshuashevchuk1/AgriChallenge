@@ -1,6 +1,7 @@
 from flask import Flask, request
 from flask_restx import Resource, Api
 
+from app import config
 from app.data import db
 import logging
 from app.data.ingest import WeatherIngestor
@@ -66,8 +67,8 @@ class WeatherApi:
         class WeatherResource(Resource):
             def get(self):
                 """
-                Get weather data based on filter parameters.
-                Can filter by station_name, date, and apply pagination.
+                gets the weather data with query filter support
+                :return:
                 """
                 filter_criteria = {}
                 date = request.args.get("date")
@@ -87,8 +88,8 @@ class WeatherApi:
         class WeatherStatsResource(Resource):
             def get(self):
                 """
-                Get weather aggregate statistics based on filter parameters.
-                Can filter by station_name, year, and apply pagination.
+                gets the weather stats with query filter support
+                :return:
                 """
                 filter_criteria = {}
                 station_name = request.args.get("station_name")
@@ -113,4 +114,5 @@ class WeatherApi:
 
     def run_server(self):
         self.add_routes(self.db)
-        self.app.run("0.0.0.0", self.port, debug=False)
+        # running on local host
+        self.app.run(config.host, self.port, debug=False)
