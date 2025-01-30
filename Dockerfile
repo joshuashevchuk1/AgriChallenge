@@ -10,6 +10,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 9020
 
-CMD [ "bash", "-c", "bash"]
-
-#CMD ["python", "/agri/src/run.py"]
+CMD ["python", "/agri/src/run.py"]
