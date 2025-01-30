@@ -2,7 +2,7 @@ import unittest
 from app import util
 
 class TestGetRecords(unittest.TestCase):
-    def test_it_should_get_all_records_for_USC00110072(self):
+    def test_it_should_get_all_records_for_usc00110072(self):
         records = util.get_records("../src/app/data/wx_data/USC00110072.txt")
         top_record = records[0]
         self.assertTrue(len(records) > 0)
@@ -13,13 +13,13 @@ class TestGetRecords(unittest.TestCase):
         self.assertTrue(top_record.get('precipitation') == 94.0)
         self.assertTrue(top_record.get('station_name') == "USC00110072")
 
-    def test_it_should_get_all_records_for_USC00125237(self):
+    def test_it_should_get_all_records_for_usc00125237(self):
         records = util.get_records("../src/app/data/wx_data/USC00125237.txt")
         top_record = records[0]
         self.assertTrue(len(records) > 0)
         self.assertTrue(top_record.get('station_name') == "USC00125237")
 
-    def test_it_should_get_all_records_for_USC00126001(self):
+    def test_it_should_get_all_records_for_usc00126001(self):
         records = util.get_records("../src/app/data/wx_data/USC00126001.txt")
         top_record = records[0]
         self.assertTrue(len(records) > 0)
