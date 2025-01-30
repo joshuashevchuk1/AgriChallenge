@@ -54,7 +54,7 @@ docker-compose up --build
 docker-compose down
 ```
 
-This build a build the flask application and mongodb into a docker compose suite called
+This buils the flask application and mongodb into a docker compose suite called
 
 ```commandline
 agrichallenge
