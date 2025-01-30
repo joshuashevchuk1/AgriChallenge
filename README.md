@@ -82,5 +82,5 @@ To deploy this to ECS
 
 - Should be refactored with a yaml based config system
 - Should have a git actions for deploying via codebuild
-- Should have an external mongodb database and not rely internally storing any data
+- Should have an external mongodb database and not rely on internally storing any data
 - Should have secrets stored in parameter store
