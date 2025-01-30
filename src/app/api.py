@@ -29,7 +29,7 @@ class WeatherApi:
         logging.info("db and wx_model initialized")
 
     def ingest(self):
-        self.weather_ingestor.ingest_all(config.data_path)
+        self.weather_ingestor.ingest_all(config.DATA_PATH)
         self.weather_ingestor.ingest_aggregates()
 
     @staticmethod
@@ -116,4 +116,4 @@ class WeatherApi:
     def run_server(self):
         self.add_routes(self.db)
         # running on local host
-        self.app.run(config.host, self.port, debug=False)
+        self.app.run(config.HOST, self.port, debug=False)
