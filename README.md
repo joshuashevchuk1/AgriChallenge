@@ -2,9 +2,9 @@
 
 ## Requirements
 
-- python3.9+
-- mongodb
-- docker
+- python3.9+ https://www.python.org/downloads/
+- mongodb https://www.mongodb.com/docs/manual/installation/
+- docker https://www.docker.com/get-started/
 
 ## Development
 
