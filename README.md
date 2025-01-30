@@ -21,6 +21,10 @@ docker-compose down
 This will initialize a flask application using mongodb as a database.
 Data is ingested at the application level.
 
+Once ingestion finishes (~60 seconds) the application will be accessible at localhost.
+
+
+
 ## Using the api
 
 Once the application ingests all data the following data inspection endpoints are available

@@ -15,6 +15,7 @@ services:
       - MONGO_USER=local
       - MONGO_PASS=local
       - APP_PORT=9020
+      - DATA_PATH=./src/app/data/wx_data
     depends_on:
       - mongo  # Ensure MongoDB starts before the Flask api
 

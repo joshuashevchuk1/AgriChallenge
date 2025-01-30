@@ -1,9 +1,10 @@
+import logging
+
 from flask import Flask, request
 from flask_restx import Resource, Api
 
 from app import config
 from app.data import db
-import logging
 from app.data.ingest import WeatherIngestor
 from app.models.weather_aggregates import WeatherAggregatesModel
 from app.models.weather_records import WeatherRecordsModel
@@ -28,7 +29,7 @@ class WeatherApi:
         logging.info("db and wx_model initialized")
 
     def ingest(self):
-        self.weather_ingestor.ingest_all("./app/data/wx_data")
+        self.weather_ingestor.ingest_all(config.data_path)
         self.weather_ingestor.ingest_aggregates()
 
     @staticmethod
