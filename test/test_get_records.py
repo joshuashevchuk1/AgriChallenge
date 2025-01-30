@@ -3,7 +3,7 @@ import unittest
 from app import util
 
 class TestGetRecords(unittest.TestCase):
-    def test_it_should_get_a_record_for_USC00110072(self):
+    def test_it_should_get_all_records_for_USC00110072(self):
         records = util.get_records("../src/app/data/wx_data/USC00110072.txt")
         top_record = records[0]
         self.assertTrue(len(records) > 0)
