@@ -4,4 +4,4 @@ import os
 if os.environ.get('HOST') is not None:
     host = os.environ['HOST']
 else:
-    host = 8080
+    host = "0.0.0.0"
