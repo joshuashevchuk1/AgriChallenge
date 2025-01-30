@@ -10,7 +10,6 @@ def get_records(file_path):
     """
     records = []
     try:
-        # Extract the station_name from the file name (assumes file name is station_name.txt)
         station_name = os.path.basename(file_path).split('.')[0]
 
         with open(file_path, "r") as file:
