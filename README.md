@@ -6,9 +6,31 @@
 - mongodb
 - docker
 
-## Setup
+## Development
 
-To build this application use the following commands
+If you have a local mongodb server you can run the application with the following command
+
+```commandline
+python3 src/run.py
+```
+
+You get a docker image for mongodb as 
+
+```commandline
+docker pull mongo
+```
+
+```commandline
+docker run -d -p 27017:27017 --name agri-mongo
+```
+
+Make sure where you run the application the application and the wx data is defined
+
+```commandline
+DATA_PATH=<path to your wx data>
+```
+
+Other wise, to build this application with docker use the following commands
 
 ```commandline
 docker-compose up --build
@@ -18,8 +40,13 @@ docker-compose up --build
 docker-compose down
 ```
 
-This will initialize a flask application using mongodb as a database.
-Data is ingested at the application level.
+This build a build the flask application and mongodb into a docker compose suite called
+
+```commandline
+agrichallenge
+```
+
+Once ingestion finishes (~60 seconds) the application will be accessible at localhost.
 
 ## Using the api
 
@@ -47,6 +74,12 @@ for GET weather stats
 curl -X GET "http://localhost:9020/api/weather/stats?station_name=USC00129557&year=1991&skip=0&limit=10"
 ```
 
+Swagger documentation can be found at 
+
+```commandline
+http://localhost:9020/
+```
+
 ## Deployement plan for ECS containers
 
 TODO:
@@ -55,5 +88,5 @@ To deploy this to ECS
 
 - Should be refactored with a yaml based config system
 - Should have a git actions for deploying via codebuild
-- Should have an external mongodb database and not rely internally storing any data
+- Should have an external mongodb database and not rely on internally storing any data
 - Should have secrets stored in parameter store

@@ -5,7 +5,7 @@ services:
     build:
       context: .  # Build Flask api from the current directory
       dockerfile: Dockerfile
-    container_name: flask_app
+    container_name: weather_app
     ports:
       - "9020:9020"  # Map Flask api port 9020 to the host
     environment:
@@ -15,6 +15,7 @@ services:
       - MONGO_USER=local
       - MONGO_PASS=local
       - APP_PORT=9020
+      - DATA_PATH=./src/app/data/wx_data
     depends_on:
       - mongo  # Ensure MongoDB starts before the Flask api
 
