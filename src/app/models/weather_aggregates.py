@@ -1,71 +1,49 @@
 from pymongo import UpdateOne
 
+
 class WeatherAggregatesModel:
     def __init__(self, db):
         self.db = db
         self.wx_collection = db["wx"]
         self.aggregate_collection = db["weather_aggregates"]
 
-    def get_weather_data(self, filter_criteria=None, skip=0, limit=100):
+    def get_weather_data(self, filters=None, skip=0, limit=100):
         """
-        Retrieves weather aggregate data from the weather_aggregates collection.
-        :param filter_criteria: Optional filter criteria (dict) to query the collection
-        :param skip: Number of records to skip (for pagination)
-        :param limit: Number of records to return (for pagination)
-        :return: A list of weather aggregate data
+        Fetches weather aggregate data with optional filters and pagination.
+        :param filters:
+        :param skip:
+        :param limit:
+        :return:
         """
-        if filter_criteria is None:
-            filter_criteria = {}
+        filters = filters or {}
+        weather_records = list(self.aggregate_collection.find(filters).skip(skip).limit(limit))
 
-        # Query the aggregate collection with pagination and filtering
-        weather_data = list(
-            self.aggregate_collection.find(filter_criteria)
-            .skip(skip)
-            .limit(limit)
-        )
+        # Convert ObjectId to string for readability
+        for record in weather_records:
+            record["_id"] = str(record["_id"])
 
-        # Convert ObjectId to string
-        for record in weather_data:
-            record['_id'] = str(record['_id'])  # Convert _id to string
-
-        return weather_data
+        return weather_records
 
     def aggregate_and_insert(self, batch_size=1000):
         """
-        Aggregates weather data from the wx collection and
-        inserts the aggregated results into the weather_aggregates collection.
-        :param batch_size: The batch size for the bulk operation
-        :return: The number of records successfully upserted
+        Aggregates weather data and upserts results into weather_aggregates.
+        :param batch_size:
+        :return:
         """
         operations = []
-        total_upserted = 0
+        total_updated = 0
 
-        # Aggregation pipeline to compute the required statistics
+        # Aggregate yearly stats for each station
         pipeline = [
-            # Match stage to filter out null values and -9999 values
-            {
-                "$match": {
-                    "max_temp": {"$ne": None, "$ne": -9999},
-                    "min_temp": {"$ne": None, "$ne": -9999},
-                    "precipitation": {"$ne": None, "$ne": -9999}
-                }
-            },
+            {"$match": {"max_temp": {"$ne": -9999}, "min_temp": {"$ne": -9999}, "precipitation": {"$ne": -9999}}},
             {
                 "$project": {
                     "station_name": 1,
-                    "year": {
-                        "$year": {
-                            "$toDate": {
-                                "$concat": [
-                                    {"$substr": [{"$toString": "$timestamp"}, 0, 4]},  # Year (first 4 digits)
-                                    "-",
-                                    {"$substr": [{"$toString": "$timestamp"}, 4, 2]},  # Month (next 2 digits)
-                                    "-",
-                                    {"$substr": [{"$toString": "$timestamp"}, 6, 2]}  # Day (last 2 digits)
-                                ]
-                            }
-                        }
-                    },
+                    "year": {"$year": {"$toDate": {"$concat": [
+                        {"$substr": [{"$toString": "$timestamp"}, 0, 4]}, "-",
+                        {"$substr": [{"$toString": "$timestamp"}, 4, 2]}, "-",
+                        {"$substr": [{"$toString": "$timestamp"}, 6, 2]}
+                    ]}}},
                     "max_temp": 1,
                     "min_temp": 1,
                     "precipitation": 1,
@@ -85,59 +63,35 @@ class WeatherAggregatesModel:
                     "_id": 0,
                     "station_name": "$_id.station_name",
                     "year": "$_id.year",
-                    "avg_max_temp": {
-                        "$cond": {
-                            "if": {"$gt": ["$count", 0]},
-                            "then": {"$divide": ["$max_temp_sum", "$count"]},
-                            "else": None
-                        }
-                    },
-                    "avg_min_temp": {
-                        "$cond": {
-                            "if": {"$gt": ["$count", 0]},
-                            "then": {"$divide": ["$min_temp_sum", "$count"]},
-                            "else": None
-                        }
-                    },
-                    "total_precipitation": {
-                        "$cond": {
-                            "if": {"$gt": ["$count", 0]},
-                            "then": {"$divide": ["$precipitation_sum", 10]},  # Convert to cm
-                            "else": None
-                        }
-                    }
+                    "avg_max_temp": {"$divide": ["$max_temp_sum", "$count"]},
+                    "avg_min_temp": {"$divide": ["$min_temp_sum", "$count"]},
+                    "total_precipitation": {"$divide": ["$precipitation_sum", 10]}  # Convert mm to cm
                 }
             }
         ]
 
-        # Run the aggregation pipeline
-        aggregated_results = self.wx_collection.aggregate(pipeline)
-
-        # Prepare the upsert operations for the weather_aggregates collection
-        for result in aggregated_results:
+        for result in self.wx_collection.aggregate(pipeline):
             operations.append(
                 UpdateOne(
                     {"station_name": result["station_name"], "year": result["year"]},
-                    {
-                        "$set": {
-                            "avg_max_temp": result["avg_max_temp"],
-                            "avg_min_temp": result["avg_min_temp"],
-                            "total_precipitation": result["total_precipitation"]
-                        }
-                    },
+                    {"$set": {
+                        "avg_max_temp": result["avg_max_temp"],
+                        "avg_min_temp": result["avg_min_temp"],
+                        "total_precipitation": result["total_precipitation"]
+                    }},
                     upsert=True
                 )
             )
 
-            # If batch size is reached, execute the bulk_write operation
+            # Bulk write in batches for efficiency
             if len(operations) >= batch_size:
-                result = self.aggregate_collection.bulk_write(operations)
-                total_upserted += result.upserted_count + result.modified_count
-                operations.clear()  # Clear operations for the next batch
+                res = self.aggregate_collection.bulk_write(operations)
+                total_updated += res.upserted_count + res.modified_count
+                operations.clear()  # Reset batch
 
-        # Final bulk write for any remaining operations
+        # Write remaining updates
         if operations:
-            result = self.aggregate_collection.bulk_write(operations)
-            total_upserted += result.upserted_count + result.modified_count
+            res = self.aggregate_collection.bulk_write(operations)
+            total_updated += res.upserted_count + res.modified_count
 
-        return total_upserted
+        return total_updated
